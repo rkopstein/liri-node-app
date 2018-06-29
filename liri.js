@@ -3,24 +3,28 @@ require("dotenv").config();
 var Twitter = require('twitter');
 var keys = require('./keys')
 var Spotify = require('node-spotify-api');
-var omdb = require('omdb');
 var client = new Twitter(keys.twitter);
 var userInput = process.argv[2];
+var userChoice = process.argv[3];
 var song = new Spotify(keys.spotify);
-
+var request = require('request');
+var fs = require("fs");
+// console.log(song)
 
 switch (userInput) {
     case `my-tweets`:
         myTweet();
         break;
     case `spotify-this-song`:
-        spotifySong();
+        spotifySong(userChoice);
         // code block
         break;
     case `movie-this`:
+    findMyMovie(userChoice);
         // code block
         break;
     case `do-what-it-says`:
+    doIt();
         // code block
         break;
     default:
@@ -48,49 +52,64 @@ function myTweet() {
 // make the 'spotify-this-song' command FULLY Work
 // make ace of base show when no entry is Made
 
-function spotifySong() {
+function spotifySong(userChoice) {
     console.log("spotify-this song")
-
-
-};
-
-song.search({ type: 'Ace of Base', query: 'The Sign' }, function (err, data) {
-    if (err) {
-        return console.log('Error occurred: ' + err);
+    var songName 
+ if (userChoice === undefined){
+      songName = "sorry"
+ } else{
+     songName = userChoice
+ }
+  
+ 
+song.search({ type: 'track', query: songName }, function(err, data) {
+    if ( err ) {
+        console.log('Error occurred: ' + err);
+        return;
     }
     else {
-        console.log(err)
+        console.log(data)
     }
-    console.log(data);
-})
+ 
+    // Do something with 'data'
+});
+}
+
+
 
 // For OMDB need to:
 // make the OMDB "movie this' command work
 // make Mr nobody pull up if no entry is made
 
-function findMyMovie() {
-    console.log("findMyMovie")
-};
-omdb.get({ title: " "}, true, function(err, movie) {
-    if(err) {
-        return console.error(err);
+function findMyMovie(userChoice) {
+    var movieName;
+    if (userChoice == ""){
+         movieName = "Mr. Nobody"
+    } else {
+        movieName = userChoice
     }
- 
-    // else(!movie){ 
-    //     return console.log('Mr. Nobody.');
-    // }
- 
-    console.log('%s (%d) %d/10', movie.title, movie.year, movie.rating, movie.tomatoes, movie.country, movie.language, movie.plot, movie. actors);
-    
-//  For Do what it says:
-//  make the song info show up when command is entered...
+    console.log("findMyMovie")
 
-    function doIT() {
-        console.log("Do-what-it-Says")
-    };
-    song.search({ type: 'Backstreet Boys', query: 'I Want it That Way' }, function (err, data) {
-        if (err) {
-            return console.log('Error occurred: ' + err);
+    var url = "http://www.omdbapi.com/?apikey=trilogy&t=" + movieName + "&y=&plot=full&tomatoes=true";
+   console.log(url)
+ 
+request(url, function (error, response, body) {
+  console.log('error:', error); // Print the error if one occurred
+  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+  console.log('body:', body); // Print the HTML for the Google homepage.
 });
-    // var movie = $(this).attr("data-name");
-    // var queryURL = "https://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy";
+}
+
+    
+ 
+   
+   
+function doIt(){
+    fs.readFile('random.txt', "utf-8", function(err, data) {
+        if (err) throw err;
+        console.log(data);
+        var dataArray = data.split(",")
+        console.log(dataArray[1])
+        spotifySong(dataArray[1])
+      });
+}
