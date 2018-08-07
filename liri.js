@@ -69,6 +69,7 @@ song.search({ type: 'track', query: songName }, function(err, data) {
     }
     else {
         console.log(data)
+        // console.log("Title: " + "Release Year: " + "Rating: " + "Rotten Tomatoes: " + "Country: " + "Language: " + "Plot: " + "Actors: " + JSON.parse(body).Year.);
     }
  
     // Do something with 'data'
@@ -90,7 +91,7 @@ function findMyMovie(userChoice) {
     }
     console.log("findMyMovie")
 
-    var url = "http://www.omdbapi.com/?apikey=trilogy&t=" + movieName + "&y=&plot=full&tomatoes=true";
+    var url = "http://www.omdbapi.com/?apikey=trilogy&t=" + movieName + "&Title=&Year=&Ratings=&tomatoes=true&Country=&Language=&Plot=short&Actors=&";
    console.log(url)
  
 request(url, function (error, response, body) {
